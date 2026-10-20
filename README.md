@@ -2,16 +2,13 @@
 
 A cinematic, responsive portfolio concept for SILENCE, an anime AMV editor and motion designer. This release focuses on a more editorial visual system, live typography effects, interaction feedback, and a more deliberate video-gallery experience.
 
-## What changed in V4
+## What changed in V5
 
-- New cinematic hero composition, editorial typography and animated character reveals (`SplitText`).
-- Interactive variable-weight headline (`VariableProximity`) and pointer-reactive warp lettering (`WarpText`).
-- CSS-driven elastic 3D-inspired visual study (`ElasticMesh`) and pointer spotlight cards (`SpotlightCard`).
-- Scroll reveal behavior, desktop target cursor and subtle click sparks with reduced-motion/touch fallbacks.
-- Refined work gallery, project filters, thumbnail-first preview cards, project detail modal, and full-video links.
-- Dark/light toggle with system preference used only as the initial default; no Auto option is displayed.
-- Refined loading intro, contact icon links, and `Built with intention by Humble` footer attribution.
-- Original SILENCE profile and banner assets preserved.
+- Single coherent stylesheet (the four stacked V1–V4 override layers were removed) with one violet accent sampled from the profile art, working dark/light themes and no theme flash on load.
+- `SplitText` now uses GSAP's SplitText + ScrollTrigger (React Bits `SplitText-JS-CSS` API: `delay`, `duration`, `ease`, `splitType`, `from`, `to`, `threshold`, `rootMargin`, `onLetterAnimationComplete`).
+- Reliable video: click-to-play YouTube facade (`VideoPlayer`) instead of autoplaying iframes mounted on scroll/hover; sharp maxres thumbnails with fallback; slow-load fallback link.
+- Project modal with prev/next, ←/→/Esc keys, focus trap and focus restore; case pages with the same player and prev/next.
+- Real project titles from the channel; old placeholder slugs redirect.
 
 ## Run locally
 
@@ -45,4 +42,4 @@ Set `NEXT_PUBLIC_SITE_URL` to the canonical deployed URL before production deplo
 
 V4 includes the portfolio frontend and interaction components. The `/admin` route is intentionally a setup notice, not a live upload dashboard. Supabase Auth, database schema/RLS, storage upload workflows, server-side admin limit enforcement, and production security configuration still require a separately configured backend and credentials. Do not treat this prototype as a complete production CMS until those pieces are implemented and tested.
 
-The local build and browser playback could not be verified in this environment because package installation could not reach the npm registry. Run `npm install`, `npm run lint`, and `npm run build` locally and review any dependency/security warnings before deploying.
+Lint and type-check pass. Embeds were verified to load; in automated/datacenter browsers YouTube may show a "confirm you're not a bot" screen, which does not happen for normal visitors.

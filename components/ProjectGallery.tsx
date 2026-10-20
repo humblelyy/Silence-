@@ -1,73 +1,137 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { gsap } from 'gsap';
 import type { Project } from '@/lib/projects';
-import SpotlightCard from '@/components/SpotlightCard';
+import VideoPlayer, { YouTubeThumbnail } from '@/components/VideoPlayer';
 
-function VideoPreview({ project, active }: { project: Project; active: boolean }) {
-  const [failed, setFailed] = useState(false);
-  const frame = useRef<HTMLIFrameElement>(null);
-  useEffect(() => {
-    if (!active && frame.current) frame.current.src = 'about:blank';
-  }, [active]);
-  if (failed) return <div className="preview-fallback">SILENCE / {project.category}</div>;
-  return <iframe ref={frame} title={`${project.title} muted preview`} src={active ? `https://www.youtube-nocookie.com/embed/${project.youtubeId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${project.youtubeId}&playsinline=1&modestbranding=1&vq=small` : 'about:blank'} loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" onError={() => setFailed(true)} />;
-}
+type Filter = { label: string; test: (p: Project) => boolean };
 
 export default function ProjectGallery({ projects }: { projects: Project[] }) {
-  const [selected, setSelected] = useState<Project | null>(null);
+  // Only offer filters that actually return work, so no button leads to an empty grid.
+  const filters = useMemo<Filter[]>(() => {
+    const list: Filter[] = [{ label: 'All', test: () => true }];
+    if (projects.some(p => p.featured)) list.push({ label: 'Best edits', test: p => p.featured });
+    for (const c of Array.from(new Set(projects.map(p => p.category))).filter(c => c !== 'Featured')) {
+      list.push({ label: c, test: p => p.category === c });
+    }
+    return list;
+  }, [projects]);
+
   const [filter, setFilter] = useState('All');
-  const [activePreview, setActivePreview] = useState<string | null>(null);
-  const observerRefs = useRef(new Map<string, HTMLDivElement>());
-  const filtered = projects.filter(project => filter === 'All' || (filter === 'Best Edits' ? project.featured : project.category === filter));
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const lastTrigger = useRef<HTMLElement | null>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+
+  const visible = projects.filter((filters.find(f => f.label === filter) ?? filters[0]).test);
+  const selected = openIndex === null ? null : visible[openIndex] ?? null;
+
+  // Animate cards in whenever the filter changes.
+  useEffect(() => {
+    const cards = gridRef.current?.querySelectorAll('.work-card');
+    if (!cards?.length || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const tween = gsap.fromTo(cards, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08 });
+    return () => { tween.kill(); gsap.set(cards, { clearProps: 'opacity,transform' }); };
+  }, [filter]);
+
+  const close = useCallback(() => setOpenIndex(null), []);
+  const step = useCallback((dir: 1 | -1) => setOpenIndex(i => (i === null ? i : (i + dir + visible.length) % visible.length)), [visible.length]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (visible) setActivePreview(visible.target.getAttribute('data-project') || null);
-    }, { threshold: [0.45, 0.7] });
-    observerRefs.current.forEach(element => observer.observe(element));
-    return () => observer.disconnect();
-  }, [filtered.length]);
-
-  useEffect(() => {
-    if (!selected) return;
-    const previous = document.body.style.overflow;
+    if (openIndex === null) { lastTrigger.current?.focus({ preventScroll: true }); return; }
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') setSelected(null); };
+    dialogRef.current?.querySelector<HTMLElement>('.modal-close')?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowRight' && visible.length > 1) step(1);
+      else if (e.key === 'ArrowLeft' && visible.length > 1) step(-1);
+      else if (e.key === 'Tab' && dialogRef.current) {
+        const f = dialogRef.current.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),iframe');
+        if (!f.length) return;
+        const first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
     window.addEventListener('keydown', onKey);
-    return () => { document.body.style.overflow = previous; window.removeEventListener('keydown', onKey); };
-  }, [selected]);
+    return () => { document.body.style.overflow = prevOverflow; window.removeEventListener('keydown', onKey); };
+  }, [openIndex === null, close, step, visible.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return <>
-    <div className="gallery-filters" aria-label="Filter projects">
-      {['All', 'Best Edits', 'AMV', '3D / Motion'].map(item => <button key={item} className={filter === item ? 'filter-button active' : 'filter-button'} onClick={() => setFilter(item)}>{item}</button>)}
-    </div>
-    <div className="project-grid">
-      {filtered.map((project, index) => <div className="project-card-wrap" style={{ animationDelay: `${index * 80}ms` }} key={project.slug} ref={element => { if (element) observerRefs.current.set(project.slug, element); else observerRefs.current.delete(project.slug); }} data-project={project.slug}>
-        <SpotlightCard className="project-spotlight">
-          <button className="project-card" onClick={() => setSelected(project)} onMouseEnter={() => setActivePreview(project.slug)} onMouseLeave={() => setActivePreview(current => current === project.slug ? null : current)} aria-label={`View details for ${project.title}`}>
-            <div className="project-preview">
-              <img className="project-thumbnail" src={`https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`} alt={`${project.title} thumbnail`} loading="lazy" onError={event => { event.currentTarget.style.opacity = '0'; event.currentTarget.alt = 'Thumbnail unavailable'; }} />
-              <div className="project-index">{String(index + 1).padStart(2, '0')}</div>
-              {activePreview === project.slug && <VideoPreview project={project} active />}
-              <div className="preview-shade" />
-              <span className="preview-open">VIEW PROJECT ↗</span>
+  return (
+    <>
+      <div className="work-filters" role="tablist" aria-label="Filter projects">
+        {filters.map(f => {
+          const count = projects.filter(f.test).length;
+          return (
+            <button key={f.label} type="button" role="tab" aria-selected={filter === f.label} className="work-filter" onClick={() => setFilter(f.label)}>
+              {f.label}<sup>{String(count).padStart(2, '0')}</sup>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="work-grid" ref={gridRef}>
+        {visible.map((project, index) => (
+          <article className={`work-card ${index === 0 ? 'work-card--lead' : ''}`} key={project.slug}>
+            <button
+              type="button"
+              className="work-card__button"
+              data-cursor-label="PLAY"
+              onClick={e => { lastTrigger.current = e.currentTarget; setOpenIndex(index); }}
+              aria-label={`Watch ${project.title}`}
+            >
+              <span className="work-card__media">
+                <YouTubeThumbnail videoId={project.youtubeId} alt={`${project.title} thumbnail`} className="work-card__thumb" />
+                <span className="work-card__shade" aria-hidden="true" />
+                <span className="work-card__index">{String(index + 1).padStart(2, '0')} / {String(visible.length).padStart(2, '0')}</span>
+                <span className="work-card__play" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg></span>
+              </span>
+              <span className="work-card__copy">
+                <span className="eyebrow">{project.anime}</span>
+                <span className="work-card__title">{project.title}</span>
+              </span>
+            </button>
+            <a className="work-card__detail" href={`/projects/${project.slug}`}>Case page ↗</a>
+          </article>
+        ))}
+        {!visible.length && <p className="work-empty">No edits in this category yet.</p>}
+      </div>
+
+      {selected && (
+        <div className="modal-backdrop" role="presentation" onMouseDown={e => { if (e.target === e.currentTarget) close(); }}>
+          <section className="project-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" ref={dialogRef}>
+            <header className="project-modal__bar">
+              <span className="eyebrow">{String(openIndex! + 1).padStart(2, '0')} / {String(visible.length).padStart(2, '0')} — {selected.category}</span>
+              <div className="project-modal__nav">
+                {visible.length > 1 && <>
+                  <button type="button" className="icon-button" onClick={() => step(-1)} aria-label="Previous edit">←</button>
+                  <button type="button" className="icon-button" onClick={() => step(1)} aria-label="Next edit">→</button>
+                </>}
+                <button type="button" className="icon-button modal-close" onClick={close} aria-label="Close">×</button>
+              </div>
+            </header>
+            <VideoPlayer key={selected.youtubeId} videoId={selected.youtubeId} title={selected.title} youtubeUrl={selected.youtubeUrl} autoLoad />
+            <div className="project-modal__body">
+              <div>
+                <h2 id="modal-title">{selected.title}</h2>
+                <p>{selected.description}</p>
+              </div>
+              <dl className="meta-list">
+                <div><dt>Anime</dt><dd>{selected.anime}</dd></div>
+                <div><dt>Music</dt><dd>{selected.music}</dd></div>
+                <div><dt>Techniques</dt><dd>{selected.techniques.join(' · ')}</dd></div>
+              </dl>
+              <div className="project-modal__actions">
+                <a className="button button--primary" href={selected.youtubeUrl} target="_blank" rel="noopener noreferrer">Watch on YouTube ↗</a>
+                {selected.projectFilesUrl && <a className="button button--ghost" href={selected.projectFilesUrl} target="_blank" rel="noopener noreferrer">{selected.resourceType === 'Paid' ? 'Get project files ↗' : 'Project files ↗'}</a>}
+                <a className="text-link" href={`/projects/${selected.slug}`}>Open case page →</a>
+              </div>
             </div>
-            <div className="project-card-copy"><div><span className="eyebrow">{project.category}</span><h3>{project.title}</h3></div><span className="card-arrow">↗</span></div>
-          </button>
-        </SpotlightCard>
-      </div>)}
-    </div>
-    {selected && <div className="modal-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setSelected(null); }}>
-      <section className="project-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        <button className="modal-close" onClick={() => setSelected(null)} aria-label="Close project details">×</button>
-        <div className="modal-video"><iframe title={selected.title} src={`https://www.youtube-nocookie.com/embed/${selected.youtubeId}?autoplay=1&mute=0&playsinline=1&rel=0`} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen /></div>
-        <div className="modal-copy"><span className="eyebrow">{selected.category} / PROJECT</span><h2 id="modal-title">{selected.title}</h2><p>{selected.description}</p>
-          <div className="project-meta"><div><span>ANIME</span><strong>{selected.anime}</strong></div><div><span>MUSIC</span><strong>{selected.music}</strong></div><div><span>TECHNIQUES</span><strong>{selected.techniques.join(' · ')}</strong></div></div>
-          <div className="modal-actions"><a className="button button-primary" href={selected.youtubeUrl} target="_blank" rel="noopener noreferrer">Watch on YouTube ↗</a>{selected.projectFilesUrl && <a className="button button-secondary" href={selected.projectFilesUrl} target="_blank" rel="noopener noreferrer">{selected.resourceType === 'Paid' ? 'Get project files ↗' : 'Project files ↗'}</a>}</div>
+          </section>
         </div>
-      </section>
-    </div>}
-  </>;
+      )}
+    </>
+  );
 }

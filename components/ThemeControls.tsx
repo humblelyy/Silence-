@@ -8,7 +8,7 @@ export default function ThemeControls() {
   const [theme, setTheme] = useState<Theme>('dark');
   useEffect(() => {
     const saved = window.localStorage.getItem('silence-theme');
-    const initial: Theme = saved === 'light' || saved === 'dark' ? saved : systemTheme();
+    const initial: Theme = saved === 'light' || saved === 'dark' ? saved : (document.documentElement.dataset.theme as Theme) || systemTheme();
     setTheme(initial); document.documentElement.dataset.theme = initial;
   }, []);
   function toggle() {

@@ -13,31 +13,31 @@ export type Project = {
   resourceType?: 'Free' | 'Paid' | 'Private';
 };
 
-// Initial showcase content from the links supplied for SILENCE.
-// Replace descriptions and project metadata with verified details before public launch.
+// Titles and anime are taken from the public YouTube titles on @silenceamvs.
+// Music credits stay "Not specified" until confirmed by the creator.
 export const projects: Project[] = [
   {
-    slug: 'most-viewed-amv', title: 'Most Viewed Edit', category: 'Featured',
-    description: 'A featured SILENCE edit. Watch the full cut and explore more work from the channel.',
-    anime: 'Not specified', music: 'Not specified', techniques: ['AMV Editing', 'After Effects'],
+    slug: 'keep-up-toji', title: 'Keep Up — Toji', category: 'Featured',
+    description: 'Toji Fushiguro in a hard-hitting 4K cut from Jujutsu Kaisen season 2 — the most viewed edit on the channel.',
+    anime: 'Jujutsu Kaisen S2', music: 'Not specified', techniques: ['AMV Editing', 'After Effects'],
     youtubeUrl: 'https://youtu.be/lm47T73ARgI', youtubeId: 'lm47T73ARgI', featured: true
   },
   {
-    slug: 'selected-amv-02', title: 'Selected Edit 02', category: 'AMV',
-    description: 'A selected AMV from the SILENCE channel. Project-specific credits can be added when confirmed.',
-    anime: 'Not specified', music: 'Not specified', techniques: ['Beat Sync', 'Compositing'],
+    slug: 'free-show-marin', title: 'Free Show — Marin Kitagawa', category: 'AMV',
+    description: 'A bright, quick 4K edit built around Marin Kitagawa — playful timing and clean beat sync.',
+    anime: 'My Dress-Up Darling', music: 'Not specified', techniques: ['Beat Sync', 'Compositing'],
     youtubeUrl: 'https://youtu.be/gkWgpYa5LIM', youtubeId: 'gkWgpYa5LIM', featured: true
   },
   {
-    slug: 'selected-amv-03', title: 'Selected Edit 03', category: 'AMV',
-    description: 'A second selected cut from the creator’s reference list. Credits are left unlisted until verified.',
-    anime: 'Not specified', music: 'Not specified', techniques: ['Motion Graphics', 'Visual Effects'],
+    slug: 'id-rather-lie-waguri', title: 'I’d Rather Lie — Waguri Kaoruko', category: 'AMV',
+    description: 'A softer, atmospheric 4K edit centred on Waguri Kaoruko, paced around mood rather than impact.',
+    anime: 'The Fragrant Flower Blooms with Dignity', music: 'Not specified', techniques: ['Motion Graphics', 'Visual Effects'],
     youtubeUrl: 'https://youtu.be/KBx_7cXsGmM', youtubeId: 'KBx_7cXsGmM', featured: true
   },
   {
-    slug: 'selected-amv-04', title: 'Selected Edit 04', category: 'AMV',
-    description: 'A selected edit from the SILENCE reference list. Open the full video to watch the complete work.',
-    anime: 'Not specified', music: 'Not specified', techniques: ['AMV Editing', 'Transitions'],
+    slug: 'catchy-momo-okarun', title: 'Catchy — Momo × Okarun', category: 'AMV',
+    description: 'A quick, high-energy Dandadan edit pairing Momo and Okarun.',
+    anime: 'Dandadan', music: 'Not specified', techniques: ['AMV Editing', 'Transitions'],
     youtubeUrl: 'https://youtu.be/RGKL7g9Ivxo', youtubeId: 'RGKL7g9Ivxo', featured: false
   }
 ];
