@@ -5,8 +5,6 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { Project } from '@/lib/projects';
 import FadeContent from '@/components/FadeContent';
-import MaskedHeading from '@/components/MaskedHeading';
-import HeroVideo from '@/components/HeroVideo';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,7 +22,7 @@ const INTRO = 0.18;
 export default function CinematicReel({ projects, introVideo, introPoster }: { projects: Project[]; introVideo: string; introPoster?: string }) {
   const root = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
-  const [entered, setEntered] = useState(false);
+  const [previous, setPrevious] = useState<Project | null>(null);
   const activeRef = useRef(0);
 
   useEffect(() => {
@@ -38,18 +36,26 @@ export default function CinematicReel({ projects, introVideo, introPoster }: { p
         end: 'bottom bottom',
         scrub: reduced ? false : 0.6,
         onUpdate: (self: ScrollTrigger) => {
-          setEntered(self.progress > INTRO * 0.7);
           const p = Math.max(0, (self.progress - INTRO) / (1 - INTRO));
           const next = Math.min(projects.length - 1, Math.floor(p * projects.length));
-          if (next !== activeRef.current) { activeRef.current = next; setActive(next); }
+          if (next !== activeRef.current) { setPrevious(projects[activeRef.current]); activeRef.current = next; setActive(next); }
           el.style.setProperty('--cut-progress', String((p * projects.length) % 1));
+          if (reduced) {
+            const intro = el.querySelector<HTMLElement>('.cine__intro');
+            if (intro) intro.style.opacity = self.progress < INTRO ? '1' : '0';
+            const screen = el.querySelector<HTMLElement>('.cine__screen');
+            if (screen) screen.style.clipPath = self.progress < INTRO
+              ? 'inset(34% 8% 14% 8% round 20px)'
+              : 'inset(0% 0% 0% 0% round 0px)';
+          }
         },
       };
       if (reduced) {
         // No choreography: screen is open, cuts still follow scroll but switch instantly.
         gsap.set('.cine__screen', { clipPath: 'inset(0% 0% 0% 0% round 0px)' });
         gsap.set(['.cine__bg', '.cine__hud'], { opacity: 1 });
-        gsap.set('.cine__intro', { opacity: 0 });
+        gsap.set('.cine__intro', { opacity: 1 });
+        gsap.set('.cine__screen', { clipPath: 'inset(34% 8% 14% 8% round 20px)' });
         ScrollTrigger.create(st);
         return;
       }
@@ -65,23 +71,13 @@ export default function CinematicReel({ projects, introVideo, introPoster }: { p
     return () => ctx.revert();
   }, [projects.length]);
 
-  // Mist crossfade between cuts: the outgoing frame dissolves into blur while the next clears from it.
-  const prev = useRef(0);
-  useEffect(() => {
-    const el = root.current;
-    if (!el || prev.current === active) return;
-    const cuts = el.querySelectorAll<HTMLElement>('.cine__cut');
-    const out = cuts[prev.current], inn = cuts[active];
-    prev.current = active;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      gsap.set(cuts, { opacity: 0 }); gsap.set(inn, { opacity: 1 }); return;
-    }
-    gsap.killTweensOf([out, inn]);
-    gsap.to(out, { opacity: 0, filter: 'blur(24px)', scale: 1.06, duration: 1.4, ease: 'power2.out' });
-    gsap.fromTo(inn, { opacity: 0, filter: 'blur(24px)', scale: 1.12 }, { opacity: 1, filter: 'blur(0px)', scale: 1, duration: 1.4, ease: 'power2.out' });
-  }, [active]);
 
   const current = projects[active];
+  useEffect(() => {
+    if (!previous) return;
+    const timer = window.setTimeout(() => setPrevious(null), 1900);
+    return () => window.clearTimeout(timer);
+  }, [active, previous]);
   const open = () => window.dispatchEvent(new CustomEvent('silence:open-project', { detail: current.slug }));
 
   return (
@@ -91,16 +87,31 @@ export default function CinematicReel({ projects, introVideo, introPoster }: { p
         <div className="cine__bg" aria-hidden="true" />
         <div className="cine__screen">
           <div className="cine__media">
-            {projects.map((p, i) => (
-              <div key={p.slug} className="cine__cut" style={{ opacity: i === 0 ? 1 : 0 }} aria-hidden={i !== active}>
-                {/* Poster underneath; the cut's own video only loads while it's the active cut. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`https://i.ytimg.com/vi/${p.youtubeId}/maxresdefault.jpg`} alt="" />
-                {entered && i === active && <HeroVideo url={p.youtubeUrl} />}
-              </div>
-            ))}
+            {/* The reel uses poster frames only. YouTube playback starts only after the visitor
+                clicks “Play this cut”, which opens the selected project in its player modal. */}
+            <div className="cine__cut-transition" aria-hidden="true">
+              {previous && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={`previous-${previous.slug}`} className="cine__cut-image cine__cut-image--out" src={`https://i.ytimg.com/vi/${previous.youtubeId}/maxresdefault.jpg`} alt="" />
+              )}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img key={current.slug} className="cine__cut-image cine__cut-image--in" src={`https://i.ytimg.com/vi/${current.youtubeId}/maxresdefault.jpg`} alt="" />
+            </div>
           </div>
           <span className="cine__vignette" aria-hidden="true" />
+          {/* Keep the scroll instruction inside the reel card, not as a separate floating panel. */}
+          <div className="cine__intro">
+            <div className="cine__intro-media" aria-hidden="true">
+              {introVideo && /\.(mp4|webm|ogg)(?:$|[?#])/i.test(introVideo) ? (
+                <video src={introVideo} poster={introPoster || undefined} autoPlay muted loop playsInline preload="metadata" />
+              ) : introPoster ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={introPoster} alt="" />
+              ) : null}
+            </div>
+            <div className="cine__intro-shade" aria-hidden="true" />
+            <h2 className="cine__intro-title">Scroll to<br />roll the reel</h2>
+          </div>
           <span className="cine__bar cine__bar--top" aria-hidden="true" />
           <span className="cine__bar cine__bar--bottom" aria-hidden="true" />
           <div className="cine__hud">
@@ -123,10 +134,6 @@ export default function CinematicReel({ projects, introVideo, introPoster }: { p
             </div>
             <div className="cine__progress" aria-hidden="true"><i /></div>
           </div>
-        </div>
-        {/* Intro stage of the same pinned scene — dissolves as the screen opens. */}
-        <div className="cine__intro">
-          <MaskedHeading text="Scroll to roll the reel" mediaType="video" src={introVideo} poster={introPoster} fillScale={1.3} parallax={0} reveal="scale" trigger="view" spotlight spotlightRadius={180} outline />
         </div>
       </div>
     </section>

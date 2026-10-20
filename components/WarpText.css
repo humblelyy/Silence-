@@ -26,3 +26,8 @@
   text-align: center;
   white-space: pre-line;
 }
+
+/* Keep a real text layer beneath WebGL so the headline is never blank on mobile/WebGL failures. */
+.warp-text__fallback { z-index: 0; color: #fff; }
+.warp-text canvas { z-index: 1; }
+.warp-text__fallback--underlay { opacity: .58; }

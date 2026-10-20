@@ -286,6 +286,7 @@ const WarpText = ({
   const propsRef = useRef(allProps);
   const contextRef = useRef(null);
   const [failed, setFailed] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     propsRef.current = allProps;
@@ -391,6 +392,7 @@ const WarpText = ({
       texture.needsUpdate = true;
       program.uniforms.uBackdrop.value = getLuminance(raster.ink) < 0.5 ? 1 : 0;
       textReady = true;
+      setReady(true);
       renderOnce();
     };
 
@@ -431,6 +433,7 @@ const WarpText = ({
       if (raf) cancelAnimationFrame(raf);
       raf = 0;
       setFailed(true);
+      setReady(false);
     };
     const onVisibility = () => {
       pageVisible = !document.hidden;
@@ -528,11 +531,9 @@ const WarpText = ({
 
   return (
     <div ref={containerRef} className={`warp-text ${className}`.trim()} style={style} role="img" aria-label={text}>
-      {failed && (
-        <span className="warp-text__fallback" aria-hidden="true" style={{ color, fontFamily, fontWeight, fontSize: getFontValue(fontSize), letterSpacing: getFontValue(letterSpacing), lineHeight }}>
-          {text}
-        </span>
-      )}
+      <span className={`warp-text__fallback${ready && !failed ? ' warp-text__fallback--underlay' : ''}`} aria-hidden="true" style={{ color, fontFamily, fontWeight, fontSize: getFontValue(fontSize), letterSpacing: getFontValue(letterSpacing), lineHeight }}>
+        {text}
+      </span>
     </div>
   );
 };
