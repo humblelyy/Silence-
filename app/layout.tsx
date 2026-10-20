@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
   openGraph: { type: 'website', url: '/', siteName: 'SILENCE', title: 'SILENCE — Anime Editor & Motion Designer', description: 'Anime editing, 3D visuals and motion graphics.', images: [{ url: '/images/silence-banner.jpg', width: 1536, height: 864, alt: 'SILENCE portfolio banner' }] },
   twitter: { card: 'summary_large_image', title: 'SILENCE — Anime Editor & Motion Designer', description: 'Anime editing, 3D visuals and motion graphics.', images: ['/images/silence-banner.jpg'] },
+  icons: { icon: '/images/silence-profile.jpg', apple: '/images/silence-profile.jpg' },
   robots: { index: true, follow: true }
 };
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, colorScheme: 'dark light', themeColor: '#09090d' };

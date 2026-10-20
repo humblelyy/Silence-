@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { Project } from '@/lib/projects';
+import FadeContent from '@/components/FadeContent';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -45,6 +46,22 @@ export default function CinematicReel({ projects }: { projects: Project[] }) {
     return () => ctx.revert();
   }, [projects.length]);
 
+  // Mist crossfade between cuts: the outgoing frame dissolves into blur while the next one clears from it.
+  const prev = useRef(0);
+  useEffect(() => {
+    const el = root.current;
+    if (!el || prev.current === active) return;
+    const imgs = el.querySelectorAll<HTMLImageElement>('.cine__media img');
+    const out = imgs[prev.current], inn = imgs[active];
+    prev.current = active;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.set(imgs, { opacity: 0 }); gsap.set(inn, { opacity: 1 }); return;
+    }
+    gsap.killTweensOf([out, inn]);
+    gsap.to(out, { opacity: 0, filter: 'blur(24px)', scale: 1.06, duration: 1.8, ease: 'power2.out' });
+    gsap.fromTo(inn, { opacity: 0, filter: 'blur(24px)', scale: 1.12 }, { opacity: 1, filter: 'blur(0px)', scale: 1, duration: 1.8, ease: 'power2.out' });
+  }, [active]);
+
   const current = projects[active];
   const open = () => window.dispatchEvent(new CustomEvent('silence:open-project', { detail: current.slug }));
 
@@ -57,7 +74,7 @@ export default function CinematicReel({ projects }: { projects: Project[] }) {
           <div className="cine__media">
             {projects.map((p, i) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={p.slug} src={`https://i.ytimg.com/vi/${p.youtubeId}/maxresdefault.jpg`} alt="" className={i === active ? 'is-active' : ''} />
+              <img key={p.slug} src={`https://i.ytimg.com/vi/${p.youtubeId}/maxresdefault.jpg`} alt="" style={{ opacity: i === 0 ? 1 : 0 }} />
             ))}
           </div>
           <span className="cine__vignette" aria-hidden="true" />
@@ -69,10 +86,10 @@ export default function CinematicReel({ projects }: { projects: Project[] }) {
               <span>CUT {String(active + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}</span>
             </div>
             <div className="cine__hud-bottom">
-              <div key={current.slug} className="cine__title">
+              <FadeContent key={current.slug} className="cine__title" effect="mist" duration={1.8} ease="power2.out" stagger={0.1} immediate>
                 <span className="eyebrow">{current.anime}</span>
                 <strong>{current.title}</strong>
-              </div>
+              </FadeContent>
               <button type="button" className="cine__play" onClick={open} data-cursor-label="PLAY">
                 <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
                 Play this cut
