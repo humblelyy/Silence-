@@ -15,7 +15,7 @@ import { YouTubeThumbnail } from '@/components/VideoPlayer';
 export default function ShowreelRows({ projects }: { projects: Project[] }) {
   // Repeat enough times that one copy is wider than any viewport, then duplicate for a seamless loop.
   const base = Array.from({ length: Math.max(2, Math.ceil(8 / projects.length)) }, () => projects).flat();
-  const rows = [base, [...base].reverse()];
+  const rows = [base];
   const ref = useRef<HTMLDivElement>(null);
 
   // Skew the rows with scroll velocity so the reel "whips" when you scroll fast.

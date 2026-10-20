@@ -466,3 +466,25 @@ body::after { content: ""; position: fixed; inset: -50%; z-index: 1500; pointer-
   .work-filters { justify-content: flex-start; }
   .wordmark__text { display: none; }
 }
+
+/* ---------- v7: masked video heading, calmer modal ---------- */
+.masked-section { padding: 80px 16px 24px; }
+.masked { position: relative; isolation: isolate; overflow: hidden; width: min(1400px, 100%); margin: 0 auto; height: clamp(220px, 34vw, 480px); border-radius: 28px; --mx: 50%; --my: 50%; }
+.masked__media { position: absolute; inset: 0; transform-origin: 50% 50%; }
+.masked__inner { position: absolute; inset: -40px 0; }
+.masked__inner video, .masked__inner img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.18); }
+.masked__plate, .masked__outline { position: absolute; inset: 0; display: grid; place-items: center; padding: 0 3%; }
+.masked__plate { background: var(--bg); mix-blend-mode: screen; transition: -webkit-mask-image .2s, mask-image .2s; }
+.masked__plate .masked__text { color: #000; }
+:root[data-theme="dark"] .masked__plate { mix-blend-mode: multiply; }
+:root[data-theme="dark"] .masked__plate .masked__text { color: #fff; }
+.masked__text { font-size: clamp(56px, 11vw, 190px); font-weight: 800; line-height: .9; letter-spacing: -.06em; text-align: center; text-wrap: balance; }
+.masked__outline { pointer-events: none; z-index: 2; }
+.masked__outline .masked__text { color: transparent; -webkit-text-stroke: 1.5px color-mix(in srgb, var(--accent) 70%, transparent); }
+.masked.is-spot .masked__plate { -webkit-mask-image: radial-gradient(circle var(--spot-r) at var(--mx) var(--my), transparent 0 70%, #000 100%); mask-image: radial-gradient(circle var(--spot-r) at var(--mx) var(--my), transparent 0 70%, #000 100%); }
+.masked__spot { position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity .3s; background: radial-gradient(circle var(--spot-r) at var(--mx) var(--my), transparent 96%, color-mix(in srgb, var(--accent) 60%, transparent) 97%, transparent 100%); }
+.masked.is-spot .masked__spot { opacity: 1; }
+.cine { margin-top: 0; }
+/* No bounce on the project modal — a calm fade only. */
+.project-modal { animation: fade-in .35s ease; }
+@media (max-width: 640px) { .masked { border-radius: 20px; height: 220px; } .masked-section { padding: 48px 8px 16px; } }

@@ -9,6 +9,7 @@ import HeroTimecode from '@/components/HeroTimecode';
 import ShowreelRows from '@/components/ShowreelRows';
 import FadeContent from '@/components/FadeContent';
 import CinematicReel from '@/components/CinematicReel';
+import MaskedHeading from '@/components/MaskedHeading';
 import ScrollProgress from '@/components/ScrollProgress';
 import { projects, socialLinks, heroVideo } from '@/lib/projects';
 import HeroVideo from '@/components/HeroVideo';
@@ -95,6 +96,22 @@ export default function HomePage() {
       </section>
 
       <ShowreelRows projects={projects} />
+
+      <section className="masked-section" aria-label="Showreel intro">
+        <MaskedHeading
+          text="Scroll to roll the reel"
+          mediaType="video"
+          src={heroVideo.url}
+          poster={heroVideo.poster}
+          fillScale={1.3}
+          parallax={34}
+          reveal="scale"
+          trigger="view"
+          spotlight
+          spotlightRadius={180}
+          outline
+        />
+      </section>
 
       <CinematicReel projects={projects} />
 

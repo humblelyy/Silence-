@@ -39,7 +39,6 @@ export default function CinematicReel({ projects }: { projects: Project[] }) {
         .fromTo('.cine__screen', { clipPath: 'inset(22% 26% 22% 26% round 28px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 0.25, ease: 'power2.inOut' }, 0)
         .fromTo('.cine__media', { scale: 1.35 }, { scale: 1, duration: 0.25, ease: 'power2.inOut' }, 0)
         .fromTo('.cine__bar', { scaleY: 0 }, { scaleY: 1, duration: 0.12, ease: 'power2.out' }, 0.18)
-        .fromTo('.cine__intro', { opacity: 1, y: 0 }, { opacity: 0, y: -60, duration: 0.12 }, 0.05)
         .fromTo('.cine__hud', { opacity: 0 }, { opacity: 1, duration: 0.08 }, 0.22)
         .to('.cine__progress i', { scaleX: 1, duration: 0.75, ease: 'none' }, 0.25);
     }, el);
@@ -69,7 +68,6 @@ export default function CinematicReel({ projects }: { projects: Project[] }) {
     <section className="cine" ref={root} aria-label="Showreel">
       <div className="cine__sticky">
         <div className="cine__bg" aria-hidden="true" />
-        <div className="cine__intro" aria-hidden="true"><span>Scroll</span> to roll the reel</div>
         <div className="cine__screen">
           <div className="cine__media">
             {projects.map((p, i) => (
