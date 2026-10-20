@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SILENCE Portfolio — Version 4
 
 A cinematic, responsive portfolio concept for SILENCE, an anime AMV editor and motion designer. This release focuses on a more editorial visual system, live typography effects, interaction feedback, and a more deliberate video-gallery experience.
@@ -46,3 +47,6 @@ Set `NEXT_PUBLIC_SITE_URL` to the canonical deployed URL before production deplo
 V4 includes the portfolio frontend and interaction components. The `/admin` route is intentionally a setup notice, not a live upload dashboard. Supabase Auth, database schema/RLS, storage upload workflows, server-side admin limit enforcement, and production security configuration still require a separately configured backend and credentials. Do not treat this prototype as a complete production CMS until those pieces are implemented and tested.
 
 The local build and browser playback could not be verified in this environment because package installation could not reach the npm registry. Run `npm install`, `npm run lint`, and `npm run build` locally and review any dependency/security warnings before deploying.
+=======
+# SILENCE Portfolio
+>>>>>>> 715ad45aa76d79fb365b74b5e73e9ca460b4d193
