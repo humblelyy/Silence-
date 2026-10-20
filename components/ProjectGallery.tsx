@@ -35,6 +35,20 @@ export default function ProjectGallery({ projects }: { projects: Project[] }) {
     return () => { tween.kill(); gsap.set(cards, { clearProps: 'opacity,transform' }); };
   }, [filter]);
 
+  // Other parts of the page (e.g. the showreel rows) can open an edit by slug.
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      const slug = (e as CustomEvent<string>).detail;
+      const i = projects.findIndex(p => p.slug === slug);
+      if (i < 0) return;
+      lastTrigger.current = document.activeElement as HTMLElement | null;
+      setFilter('All');
+      setOpenIndex(i);
+    };
+    window.addEventListener('silence:open-project', onOpen);
+    return () => window.removeEventListener('silence:open-project', onOpen);
+  }, [projects]);
+
   const close = useCallback(() => setOpenIndex(null), []);
   const step = useCallback((dir: 1 | -1) => setOpenIndex(i => (i === null ? i : (i + dir + visible.length) % visible.length)), [visible.length]);
 

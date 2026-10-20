@@ -8,12 +8,10 @@ import SpotlightCard from '@/components/SpotlightCard';
 import ScrollReveal from '@/components/ScrollReveal';
 import WarpText from '@/components/WarpText';
 import HeroTimecode from '@/components/HeroTimecode';
+import ShowreelRows from '@/components/ShowreelRows';
 import { projects, socialLinks } from '@/lib/projects';
 
-// The loading intro finishes ~1.7s after load; hero type starts as it clears.
-const INTRO = 1.5;
-
-const disciplines = ['Anime music videos', 'Beat sync', 'After Effects', 'Compositing', 'Motion design', 'Colour'];
+const INTRO = 1.5; // seconds — hero type starts as the loading intro clears
 
 export default function HomePage() {
   return (
@@ -22,7 +20,7 @@ export default function HomePage() {
       <header className="site-header">
         <a className="wordmark" href="#home" aria-label="SILENCE home">S<span>.</span></a>
         <nav className="main-nav" aria-label="Main navigation">
-          <a href="#work">Work</a><a href="#approach">Approach</a><a href="#contact">Contact</a>
+          <a href="#work">Work</a><a href="#toolkit">Toolkit</a><a href="#contact">Contact</a>
         </nav>
         <div className="header-actions">
           <ThemeControls />
@@ -30,72 +28,117 @@ export default function HomePage() {
         </div>
       </header>
 
-      <section className="hero shell" id="home">
-        <div className="hero__copy">
-          <p className="eyebrow"><span className="status-dot" /> Anime editor · Motion designer</p>
-          <h1 className="hero__title">
-            <SplitText tag="span" text="Silence" className="hero__line" trigger="load" startDelay={INTRO} delay={60} duration={1} ease="expo.out" from={{ opacity: 0, yPercent: 110 }} to={{ opacity: 1, yPercent: 0 }} />
-            <SplitText tag="span" text="is a feeling." className="hero__line hero__line--accent" trigger="load" startDelay={INTRO + 0.35} delay={35} duration={0.9} ease="expo.out" from={{ opacity: 0, yPercent: 110 }} to={{ opacity: 1, yPercent: 0 }} />
-          </h1>
-          <p className="hero__lede" data-reveal>Anime edits cut to the beat — rhythm, atmosphere and impact in every frame. Independent work by SILENCE.</p>
-          <div className="hero__actions" data-reveal>
-            <a className="button button--primary magnet-button" href="#work">Watch the work <span aria-hidden="true">↘</span></a>
-            <a className="text-link" href="https://youtube.com/@silenceamvs" target="_blank" rel="noopener noreferrer">YouTube channel ↗</a>
-          </div>
+      {/* ---------- Hero ---------- */}
+      <section className="hero" id="home">
+        <a className="hero__badge" href="https://youtube.com/@silenceamvs" target="_blank" rel="noopener noreferrer">
+          <span className="hero__badge-tag">New</span> Fresh 4K edits on YouTube <span aria-hidden="true">→</span>
+        </a>
+        <h1 className="sr-only">Silence is a feeling — anime editor and motion designer</h1>
+        <WarpText
+          className="hero__warp"
+          text={'Silence is\na feeling.'}
+          warpStrength={0.08}
+          warpScale={1.7}
+          speed={0.55}
+          lens="bulge"
+          pointerInfluence={0.42}
+          pointerStrength={0.38}
+          refraction={0.018}
+          chromatic={0.35}
+          idleDrift={0.2}
+          ripple
+          clickRipple
+          intro
+          fontSize="clamp(4rem, 11vw, 10rem)"
+          fontWeight={800}
+          letterSpacing="-0.06em"
+        />
+        <SplitText
+          tag="p"
+          className="hero__lede"
+          text="Anime edits cut to the beat — rhythm, atmosphere and impact in every frame."
+          splitType="words"
+          trigger="load"
+          startDelay={INTRO}
+          delay={35}
+          duration={0.7}
+          textAlign="center"
+          from={{ opacity: 0, y: 18 }}
+          to={{ opacity: 1, y: 0 }}
+        />
+        <div className="hero__actions" data-reveal>
+          <a className="button button--primary magnet-button" href="#work">Watch the work</a>
+          <a className="button button--ghost" href="#contact">Work with me</a>
         </div>
-
-        <figure className="viewer" data-reveal>
-          <div className="viewer__bar"><span>SILENCE_MASTER.aep</span><HeroTimecode /></div>
-          <div className="viewer__frame">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/silence-profile.jpg" alt="SILENCE profile artwork: an anime girl with windswept hair" />
-            <span className="viewer__safe" aria-hidden="true" />
-          </div>
-          <div className="viewer__timeline" aria-hidden="true">
-            <span className="viewer__playhead" />
-            <span className="track track--v"><i style={{ width: '22%' }} /><i style={{ width: '14%' }} /><i style={{ width: '31%' }} /><i style={{ width: '18%' }} /></span>
-            <span className="track track--a"><i style={{ width: '100%' }} /></span>
-          </div>
-        </figure>
+        <p className="hero__proof" data-reveal><strong>4K edits</strong> across Jujutsu Kaisen, Dandadan, My Dress-Up Darling and more.</p>
       </section>
 
-      <div className="marquee" aria-label="Disciplines">
-        <div className="marquee__track">
-          {[...disciplines, ...disciplines].map((d, i) => <span key={i} aria-hidden={i >= disciplines.length}>{d}<i>✦</i></span>)}
-        </div>
-      </div>
+      <ShowreelRows projects={projects} />
 
+      {/* ---------- Work ---------- */}
       <section className="work shell" id="work">
-        <div className="section-head">
-          <div>
-            <p className="eyebrow">01 — Selected work</p>
-            <SplitText tag="h2" text="Made to move." className="section-title" splitType="words" delay={90} duration={0.9} ease="power4.out" from={{ opacity: 0, y: 50 }} to={{ opacity: 1, y: 0 }} />
-          </div>
+        <div className="section-head section-head--center">
+          <p className="eyebrow">Selected work</p>
+          <SplitText tag="h2" text="Made to move." className="section-title" splitType="chars" delay={30} duration={0.8} ease="power4.out" textAlign="center" from={{ opacity: 0, y: 60 }} to={{ opacity: 1, y: 0 }} />
           <p data-reveal>Every edit opens in a full player. Use ← → to flip between cuts, Esc to close.</p>
         </div>
         <ProjectGallery projects={projects} />
       </section>
 
-      <section className="motion shell" id="approach">
-        <div className="motion__copy" data-reveal>
-          <p className="eyebrow">02 — Approach</p>
-          <h2 className="section-title">Make the<br /><VariableProximity label="frame breathe." className="motion__vp" radius={170} fontSize={64} fromWeight={400} toWeight={800} /></h2>
-          <p className="motion__sig"><WarpText text="Bend the moment." /></p>
-          <ol className="process">
-            <li><b>01</b><span><strong>Listen</strong>Map the song’s drops, breaths and silences before a single cut.</span></li>
-            <li><b>02</b><span><strong>Cut</strong>Pick shots for motion and emotion, then lock them to the beat.</span></li>
-            <li><b>03</b><span><strong>Finish</strong>Shakes, transitions, colour and 4K export — impact without noise.</span></li>
-          </ol>
+      {/* ---------- Toolkit bento ---------- */}
+      <section className="toolkit shell" id="toolkit">
+        <div className="section-head section-head--center">
+          <p className="eyebrow">The toolkit</p>
+          <SplitText tag="h2" text="Every cut, on purpose." className="section-title" splitType="words" delay={80} duration={0.9} ease="power4.out" textAlign="center" from={{ opacity: 0, y: 50 }} to={{ opacity: 1, y: 0 }} />
         </div>
-        <SpotlightCard className="motion__card"><ElasticMesh /><div className="motion__card-foot"><span>ELASTIC FORM / 004</span><span>MOVE YOUR CURSOR</span></div></SpotlightCard>
+        <div className="bento">
+          <SpotlightCard className="bento__card bento__card--wide">
+            <div className="bento__copy"><h3>Beat-locked timing</h3><p>Shots, shakes and flashes are mapped to the song’s drops, breaths and silences before a single cut.</p></div>
+            <div className="bento__timeline" aria-hidden="true">
+              <div className="bento__tc"><HeroTimecode /></div>
+              <span className="viewer__playhead" />
+              <span className="track track--v"><i style={{ width: '22%' }} /><i style={{ width: '14%' }} /><i style={{ width: '31%' }} /><i style={{ width: '18%' }} /></span>
+              <span className="track track--v track--alt"><i style={{ width: '9%' }} /><i style={{ width: '27%' }} /><i style={{ width: '12%' }} /><i style={{ width: '35%' }} /></span>
+              <span className="track track--a"><i style={{ width: '100%' }} /></span>
+            </div>
+          </SpotlightCard>
+          <SpotlightCard className="bento__card bento__card--mesh">
+            <ElasticMesh />
+            <div className="bento__copy bento__copy--overlay"><h3>Motion &amp; 3D</h3></div>
+          </SpotlightCard>
+          <SpotlightCard className="bento__card">
+            <div className="bento__swatches" aria-hidden="true"><i /><i /><i /><i /></div>
+            <div className="bento__copy"><h3>Colour</h3><p>Grades that carry the mood of each scene.</p></div>
+          </SpotlightCard>
+          <SpotlightCard className="bento__card">
+            <div className="bento__big" aria-hidden="true">4K</div>
+            <div className="bento__copy"><h3>Clean exports</h3><p>Sharp 4K masters, ready for YouTube, TikTok and Reels.</p></div>
+          </SpotlightCard>
+          <SpotlightCard className="bento__card">
+            <div className="bento__vp"><VariableProximity label="breathe." radius={140} fontSize={58} fromWeight={300} toWeight={800} /></div>
+            <div className="bento__copy"><h3>Transitions</h3><p>Hover the word — every frame should flow into the next.</p></div>
+          </SpotlightCard>
+        </div>
       </section>
 
+      {/* ---------- Quote with sticker ---------- */}
+      <section className="quote shell" data-reveal>
+        <p className="quote__text">
+          “Less noise.{' '}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="quote__sticker" src="/images/silence-profile.jpg" alt="" />{' '}
+          More impact. The edit is the message.”
+        </p>
+        <p className="quote__by"><strong>SILENCE</strong> Independent anime editor</p>
+      </section>
+
+      {/* ---------- Contact ---------- */}
       <section className="contact shell" id="contact">
-        <p className="eyebrow">03 — Have a project in mind?</p>
-        <SplitText tag="h2" text="Make it mean something." className="contact__title" splitType="words" delay={80} duration={1} ease="power4.out" from={{ opacity: 0, y: 70 }} to={{ opacity: 1, y: 0 }} />
-        <div className="contact__grid">
-          <p data-reveal>For edits, collaborations and creative enquiries, reach out on any channel below — Discord is fastest.</p>
-          <ul className="contact__links" data-reveal>
+        <SpotlightCard className="contact__panel">
+          <p className="eyebrow">Have a project in mind?</p>
+          <SplitText tag="h2" text="Make it mean something." className="contact__title" splitType="words" delay={80} duration={1} ease="power4.out" textAlign="center" from={{ opacity: 0, y: 70 }} to={{ opacity: 1, y: 0 }} />
+          <p className="contact__lede">For edits, collaborations and creative enquiries — Discord is fastest.</p>
+          <ul className="contact__links">
             {socialLinks.map(item => (
               <li key={item.label}>
                 <a href={item.href} target="_blank" rel="noopener noreferrer" aria-label={`${item.label} (opens in new tab)`}>
@@ -104,7 +147,7 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
-        </div>
+        </SpotlightCard>
       </section>
 
       <footer className="site-footer">
