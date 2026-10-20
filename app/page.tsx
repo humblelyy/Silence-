@@ -6,9 +6,9 @@ import SpotlightCard from '@/components/SpotlightCard';
 import ScrollReveal from '@/components/ScrollReveal';
 import WarpText from '@/components/WarpText';
 import HeroTimecode from '@/components/HeroTimecode';
-import ShowreelRows from '@/components/ShowreelRows';
 import FadeContent from '@/components/FadeContent';
 import CinematicReel from '@/components/CinematicReel';
+import ShowreelRows from '@/components/ShowreelRows';
 import ScrollProgress from '@/components/ScrollProgress';
 import { projects, socialLinks, heroVideo } from '@/lib/projects';
 import HeroVideo from '@/components/HeroVideo';
@@ -57,7 +57,7 @@ export default function HomePage() {
         <h1 className="sr-only">Silence is a feeling — anime editor and motion designer</h1>
         <WarpText
           className="hero__warp"
-          text={'Silence is\na feeling.'}
+          text="Silence is a feeling."
           warpStrength={0.08}
           warpScale={1.7}
           speed={0.55}
@@ -70,8 +70,10 @@ export default function HomePage() {
           ripple
           clickRipple
           intro
-          fontSize="clamp(4rem, 11vw, 10rem)"
+          fontSize="clamp(3rem, 10vw, 9rem)"
           fontWeight={800}
+          style={{ height: '320px' }}
+          color={null}
           letterSpacing="-0.06em"
         />
         <SplitText

@@ -488,8 +488,8 @@ body::after { content: ""; position: fixed; inset: -50%; z-index: 1500; pointer-
 /* ---------- v8: single pinned reel ---------- */
 .cine { margin-top: 0; }
 .cine__sticky { height: 100svh; }
-.cine__intro { position: absolute; left: 0; right: 0; top: calc(72px + 3vh); z-index: 4; padding: 0 16px; will-change: opacity, transform, filter; }
-.cine__intro .masked { height: min(34svh, 340px); }
+.cine__intro { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; padding: 0 16px; text-align: center; pointer-events: none; will-change: opacity, transform, filter; }
+.cine__intro .masked { width: 100%; height: min(30svh, 300px); max-width: 1000px; }
 .cine__intro .masked__text { font-size: clamp(44px, 8.5vw, 150px); }
 .cine__cut { position: absolute; inset: 0; will-change: opacity, filter, transform; }
 .cine__cut > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -500,12 +500,21 @@ body::after { content: ""; position: fixed; inset: -50%; z-index: 1500; pointer-
 .cine__ticks i.is-done { background: rgba(255, 255, 255, .6); }
 .cine__ticks i.is-active { background: #fff; height: 44px; }
 @media (max-width: 640px) {
-  .cine__intro { top: calc(68px + 2vh); }
-  .cine__intro .masked { height: 26svh; }
+  .cine__intro { padding: 0 20px; }
+  .cine__intro .masked { height: clamp(130px, 25svh, 220px); }
+  .cine__intro .masked__text { font-size: clamp(32px, 9vw, 58px); line-height: .95; }
   .cine__ticks { display: none; }
+  .cine__screen { clip-path: inset(38% 7% 18% 7% round 18px); }
+  .cine__cut > img { object-fit: contain; background: #000; }
+  .cine__hud { padding: 24px 18px 30px; }
+  .cine__hud-top { font-size: 10px; }
+  .cine__hud-bottom { gap: 16px; }
+  .cine__title strong { font-size: clamp(28px, 8vw, 44px); max-width: 12ch; }
+  .cine__play { padding: 12px 18px; font-size: 13px; }
+  .cine__progress { left: 18px; right: 18px; bottom: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cine__intro { display: none; }
+  .cine__cut-image--out, .cine__cut-image--in { animation: none; }
 }
 
 /* ---------- v8: spring cards + cinematic modal ---------- */
@@ -542,3 +551,53 @@ body::after { content: ""; position: fixed; inset: -50%; z-index: 1500; pointer-
 }
 .modal-backdrop { z-index: 1200; }
 body:has(.modal-backdrop) .target-cursor { display: none; }
+
+
+/* Scroll-reel fix: the instruction is part of the reel card; mount only one active video. */
+.cine__screen { isolation: isolate; }
+.cine__media { z-index: 0; }
+.cine__cut-transition { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
+.cine__cut-transition > .cine__cut { position: absolute; inset: 0; }
+.cine__cut { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.cine__cut > img { z-index: 0; object-fit: cover; }
+.cine__cut > .hero-video { z-index: 1; }
+.cine__vignette { z-index: 2; }
+.cine__intro { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; padding: clamp(12px, 3vw, 40px); pointer-events: none; will-change: opacity, transform, filter; }
+.cine__intro .masked { width: 100%; max-width: 1100px; height: clamp(150px, 34vh, 330px); margin: 0 auto; }
+.cine__intro .masked__text { font-size: clamp(36px, 8.2vw, 138px); line-height: .88; }
+.cine__hud { z-index: 5; }
+.cine__bar { z-index: 4; }
+@media (max-width: 640px) {
+  .cine__screen { clip-path: inset(28% 5% 14% 5% round 18px); }
+  .cine__intro { padding: 12px; }
+  .cine__intro .masked { height: clamp(110px, 22vh, 190px); }
+  .cine__intro .masked__text { font-size: clamp(30px, 8.8vw, 54px); line-height: .92; }
+  .cine__cut > img { object-fit: cover; }
+}
+
+/* Scroll reel correction: one framed intro card, a real image crossfade, no autoplaying cut players. */
+.cine__screen { background: #050507; }
+.cine__media { overflow: hidden; }
+.cine__cut-transition { position: absolute; inset: 0; overflow: hidden; background: #050507; }
+.cine__cut-image { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+.cine__cut-image--out { z-index: 1; animation: cine-cut-out 1.8s cubic-bezier(.16, 1, .3, 1) both; }
+.cine__cut-image--in { z-index: 2; animation: cine-cut-in 1.8s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes cine-cut-in { from { opacity: 0; filter: blur(14px); transform: scale(1.025); } to { opacity: 1; filter: blur(0); transform: scale(1); } }
+@keyframes cine-cut-out { from { opacity: 1; filter: blur(0); transform: scale(1); } to { opacity: 0; filter: blur(12px); transform: scale(.99); } }
+.cine__intro { overflow: hidden; isolation: isolate; border-radius: 0; }
+.cine__intro-media, .cine__intro-media video, .cine__intro-media img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cine__intro-media { z-index: 0; overflow: hidden; background: #111; }
+.cine__intro-media video, .cine__intro-media img { object-fit: cover; transform: scale(1.04); }
+.cine__intro-shade { position: absolute; inset: 0; z-index: 1; background: linear-gradient(120deg, rgba(4,4,8,.58), rgba(4,4,8,.28)), rgba(0,0,0,.2); }
+.cine__intro-title { position: relative; z-index: 2; margin: 0; max-width: 12ch; color: #fff; font-size: clamp(38px, 8.2vw, 138px); line-height: .88; font-weight: 850; letter-spacing: -.075em; text-wrap: balance; text-shadow: 0 8px 38px rgba(0,0,0,.35); }
+.cine__screen { clip-path: inset(42% 20% 8% 20% round 28px); }
+.cine__intro { border-radius: inherit; }
+@media (max-width: 640px) {
+  .cine__screen { clip-path: inset(34% 5% 16% 5% round 18px); }
+  .cine__intro-title { font-size: clamp(29px, 8.5vw, 54px); line-height: .94; padding: 0 8px; }
+  .cine__intro-media video, .cine__intro-media img { object-fit: cover; }
+  .cine__cut-image { object-fit: contain; background: #050507; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cine__cut-image--out, .cine__cut-image--in { animation: none; }
+}
