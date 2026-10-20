@@ -6,6 +6,8 @@ export type Project = {
   anime: string;
   music: string;
   techniques: string[];
+  /** Software used, shown in the project popup when provided. */
+  software?: string[];
   youtubeUrl: string;
   youtubeId: string;
   featured: boolean;

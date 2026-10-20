@@ -349,7 +349,7 @@ body::after { content: ""; position: fixed; inset: -50%; z-index: 1500; pointer-
 .cine__bg { position: absolute; inset: 0; background: #050507; }
 .cine__intro { position: absolute; top: 9%; left: 0; right: 0; z-index: 3; text-align: center; font-size: clamp(28px, 4vw, 56px); font-weight: 800; letter-spacing: -.05em; color: var(--text); }
 .cine__intro span { color: var(--accent); }
-.cine__screen { position: absolute; inset: 0; overflow: hidden; clip-path: inset(22% 26% 22% 26% round 28px); background: #000; }
+.cine__screen { position: absolute; inset: 0; overflow: hidden; clip-path: inset(42% 20% 8% 20% round 28px); background: #000; }
 .cine__media { position: absolute; inset: 0; }
 .cine__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; will-change: opacity, filter, transform; }
 .cine__vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, .7)); pointer-events: none; }
@@ -371,13 +371,10 @@ body::after { content: ""; position: fixed; inset: -50%; z-index: 1500; pointer-
 .cine__progress { position: absolute; left: clamp(20px, 4vw, 56px); right: clamp(20px, 4vw, 56px); bottom: calc(10vh - 22px); height: 2px; background: rgba(255, 255, 255, .2); }
 .cine__progress i { display: block; height: 100%; background: #fff; transform: scaleX(0); transform-origin: 0 50%; }
 @media (max-width: 640px) {
-  .cine { height: 360vh; }
   .cine__hud-bottom { flex-direction: column; align-items: flex-start; }
 }
 @media (prefers-reduced-motion: reduce) {
   body::after { animation: none; }
-  .cine { height: auto; }
-  .cine__sticky { position: relative; height: 70vh; }
   .cine__hud { opacity: 1; }
   .cine__bar { transform: none; }
 }
@@ -468,7 +465,6 @@ body::after { content: ""; position: fixed; inset: -50%; z-index: 1500; pointer-
 }
 
 /* ---------- v7: masked video heading, calmer modal ---------- */
-.masked-section { padding: 80px 16px 24px; }
 .masked { position: relative; isolation: isolate; overflow: hidden; width: min(1400px, 100%); margin: 0 auto; height: clamp(220px, 34vw, 480px); border-radius: 28px; --mx: 50%; --my: 50%; }
 .masked__media { position: absolute; inset: 0; transform-origin: 50% 50%; }
 .masked__inner { position: absolute; inset: -40px 0; }
@@ -487,4 +483,62 @@ body::after { content: ""; position: fixed; inset: -50%; z-index: 1500; pointer-
 .cine { margin-top: 0; }
 /* No bounce on the project modal — a calm fade only. */
 .project-modal { animation: fade-in .35s ease; }
-@media (max-width: 640px) { .masked { border-radius: 20px; height: 220px; } .masked-section { padding: 48px 8px 16px; } }
+
+
+/* ---------- v8: single pinned reel ---------- */
+.cine { margin-top: 0; }
+.cine__sticky { height: 100svh; }
+.cine__intro { position: absolute; left: 0; right: 0; top: calc(72px + 3vh); z-index: 4; padding: 0 16px; will-change: opacity, transform, filter; }
+.cine__intro .masked { height: min(34svh, 340px); }
+.cine__intro .masked__text { font-size: clamp(44px, 8.5vw, 150px); }
+.cine__cut { position: absolute; inset: 0; will-change: opacity, filter, transform; }
+.cine__cut > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cine__cut .hero-video__shade { display: none; }
+.cine__cut .hero-video__poster { display: none; }
+.cine__ticks { position: absolute; right: clamp(20px, 4vw, 56px); top: 50%; transform: translateY(-50%); display: grid; gap: 10px; }
+.cine__ticks i { display: block; width: 3px; height: 28px; border-radius: 3px; background: rgba(255, 255, 255, .25); transition: background .4s, height .4s var(--ease); }
+.cine__ticks i.is-done { background: rgba(255, 255, 255, .6); }
+.cine__ticks i.is-active { background: #fff; height: 44px; }
+@media (max-width: 640px) {
+  .cine__intro { top: calc(68px + 2vh); }
+  .cine__intro .masked { height: 26svh; }
+  .cine__ticks { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cine__intro { display: none; }
+}
+
+/* ---------- v8: spring cards + cinematic modal ---------- */
+.work-card { transition: transform .55s cubic-bezier(.34, 1.56, .64, 1); will-change: transform; }
+.work-card:hover { transform: translateY(-8px) scale(1.012); }
+.work-card:active { transform: translateY(-2px) scale(.985); transition-duration: .15s; }
+.work-card__media { transition: box-shadow .55s cubic-bezier(.34, 1.56, .64, 1); }
+.work-card:hover .work-card__media { box-shadow: 0 28px 50px -24px var(--shadow), 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent); }
+.work-card__play { transition: opacity .35s, transform .55s cubic-bezier(.34, 1.56, .64, 1); }
+.reel__card { transition: transform .55s cubic-bezier(.34, 1.56, .64, 1); }
+.reel__card:hover { transform: translateY(-6px) scale(1.02); }
+
+.modal-backdrop { animation: none; perspective: 1400px; }
+.project-modal { animation: none; transform-origin: 50% 60%; box-shadow: 0 60px 120px -40px rgba(0, 0, 0, .6); }
+.project-modal__bar { gap: 16px; padding: 14px 14px 14px 16px; }
+.project-modal__ident { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.project-modal__cover { width: 72px; height: 44px; flex: none; border-radius: 8px; object-fit: cover; }
+.project-modal__name { display: block; font-size: 16px; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.project-modal__ident > div { min-width: 0; }
+.project-modal__nav { align-items: center; flex: none; }
+.modal-close { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 8px 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--text); color: var(--bg); font-weight: 700; font-size: 13px; cursor: pointer; transition: transform .45s cubic-bezier(.34, 1.56, .64, 1), background .2s; }
+.modal-close:hover { transform: scale(1.06); background: var(--accent); color: var(--accent-ink); }
+.modal-close kbd { font: 10px var(--mono); padding: 3px 6px; border-radius: 6px; background: color-mix(in srgb, var(--bg) 22%, transparent); }
+.project-modal__about { display: flex; flex-direction: column; gap: 4px; }
+.project-modal__actions { margin-top: 18px; }
+.project-modal__actions .button--primary { gap: 10px; }
+@media (max-width: 640px) {
+  .project-modal__cover { display: none; }
+  .modal-close span, .modal-close kbd { display: none; }
+  .modal-close { width: 40px; padding: 0; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .work-card, .work-card:hover, .reel__card:hover { transform: none; }
+}
+.modal-backdrop { z-index: 1200; }
+body:has(.modal-backdrop) .target-cursor { display: none; }
