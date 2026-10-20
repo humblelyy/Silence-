@@ -1,0 +1,11 @@
+services:
+  web:
+    image: node:22-bookworm
+    working_dir: /workspace
+    network_mode: host
+    volumes:
+      - .:/workspace
+    environment:
+      IS_ALLOY: ${IS_ALLOY:-false}
+      NEXT_TELEMETRY_DISABLED: "1"
+    command: bash -lc "npm install && npx next dev -H 0.0.0.0 -p 3000"
