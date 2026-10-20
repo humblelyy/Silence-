@@ -337,3 +337,48 @@ img { display: block; max-width: 100%; }
   .reel__track { animation: none; }
   .reel { overflow-x: auto; }
 }
+
+/* ---------- next-level layer: grain, progress, cinema ---------- */
+body::after { content: ""; position: fixed; inset: -50%; z-index: 1500; pointer-events: none; opacity: .06; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); animation: grain 1s steps(6) infinite; }
+@keyframes grain { 0% { transform: translate(0, 0); } 20% { transform: translate(-3%, 2%); } 40% { transform: translate(2%, -3%); } 60% { transform: translate(-2%, -1%); } 80% { transform: translate(3%, 3%); } 100% { transform: translate(0, 0); } }
+.scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 1600; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; }
+.reel__row { will-change: transform; }
+
+.cine { position: relative; height: 420vh; margin-top: 40px; }
+.cine__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; display: grid; place-items: center; }
+.cine__bg { position: absolute; inset: 0; background: #050507; }
+.cine__intro { position: absolute; top: 9%; left: 0; right: 0; z-index: 3; text-align: center; font-size: clamp(28px, 4vw, 56px); font-weight: 800; letter-spacing: -.05em; color: var(--text); }
+.cine__intro span { color: var(--accent); }
+.cine__screen { position: absolute; inset: 0; overflow: hidden; clip-path: inset(22% 26% 22% 26% round 28px); background: #000; }
+.cine__media { position: absolute; inset: 0; }
+.cine__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.08); transition: opacity .35s steps(3), transform 2.4s var(--ease); }
+.cine__media img.is-active { opacity: 1; transform: scale(1); }
+.cine__vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, .7)); pointer-events: none; }
+.cine__bar { position: absolute; left: 0; right: 0; height: 10vh; background: #000; z-index: 2; transform: scaleY(0); }
+.cine__bar--top { top: 0; transform-origin: top; }
+.cine__bar--bottom { bottom: 0; transform-origin: bottom; }
+.cine__hud { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; justify-content: space-between; padding: calc(10vh + 24px) clamp(20px, 4vw, 56px) calc(10vh + 32px); color: #fff; opacity: 0; pointer-events: none; }
+.cine__hud-top { display: flex; justify-content: space-between; font: 12px var(--mono); letter-spacing: .14em; }
+.cine__rec { display: inline-flex; align-items: center; gap: 8px; }
+.cine__rec i { width: 9px; height: 9px; border-radius: 50%; background: #ff3b4f; animation: pulse-rec 1s steps(2) infinite; }
+@keyframes pulse-rec { 50% { opacity: 0; } }
+.cine__hud-bottom { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+.cine__title { display: flex; flex-direction: column; gap: 8px; animation: cut-in .6s var(--ease); }
+.cine__title .eyebrow { color: rgba(255, 255, 255, .7); }
+.cine__title strong { font-size: clamp(32px, 6vw, 96px); line-height: .92; letter-spacing: -.06em; max-width: 14ch; text-shadow: 0 10px 40px rgba(0, 0, 0, .5); }
+@keyframes cut-in { from { opacity: 0; transform: translateY(30px); filter: blur(8px); } }
+.cine__play { pointer-events: auto; flex: none; display: inline-flex; align-items: center; gap: 10px; padding: 16px 24px; border: 0; border-radius: 999px; background: #fff; color: #0a0a0e; font-weight: 700; font-size: 15px; cursor: pointer; transition: background .25s, color .25s; }
+.cine__play:hover { background: var(--accent); color: var(--accent-ink); }
+.cine__progress { position: absolute; left: clamp(20px, 4vw, 56px); right: clamp(20px, 4vw, 56px); bottom: calc(10vh - 22px); height: 2px; background: rgba(255, 255, 255, .2); }
+.cine__progress i { display: block; height: 100%; background: #fff; transform: scaleX(0); transform-origin: 0 50%; }
+@media (max-width: 640px) {
+  .cine { height: 360vh; }
+  .cine__hud-bottom { flex-direction: column; align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none; }
+  .cine { height: auto; }
+  .cine__sticky { position: relative; height: 70vh; }
+  .cine__hud { opacity: 1; }
+  .cine__bar { transform: none; }
+}

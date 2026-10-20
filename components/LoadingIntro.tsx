@@ -12,9 +12,12 @@ export default function LoadingIntro() {
       // Keep the intro brief, but wait for the page's load event when possible.
       timeout = setTimeout(() => setReady(true), 850);
     };
+    // Finish on load, but never hold visitors longer than ~1.6s on slow image-heavy loads.
+    const cap = setTimeout(() => setReady(true), 1600);
     if (document.readyState === 'complete') finish();
     else window.addEventListener('load', finish, { once: true });
     return () => {
+      clearTimeout(cap);
       window.removeEventListener('load', finish);
       if (timeout) clearTimeout(timeout);
     };

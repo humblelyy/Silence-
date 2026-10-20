@@ -9,6 +9,8 @@ import ScrollReveal from '@/components/ScrollReveal';
 import WarpText from '@/components/WarpText';
 import HeroTimecode from '@/components/HeroTimecode';
 import ShowreelRows from '@/components/ShowreelRows';
+import CinematicReel from '@/components/CinematicReel';
+import ScrollProgress from '@/components/ScrollProgress';
 import { projects, socialLinks } from '@/lib/projects';
 
 const INTRO = 1.5; // seconds — hero type starts as the loading intro clears
@@ -17,6 +19,7 @@ export default function HomePage() {
   return (
     <main>
       <ScrollReveal />
+      <ScrollProgress />
       <header className="site-header">
         <a className="wordmark" href="#home" aria-label="SILENCE home">S<span>.</span></a>
         <nav className="main-nav" aria-label="Main navigation">
@@ -74,6 +77,8 @@ export default function HomePage() {
       </section>
 
       <ShowreelRows projects={projects} />
+
+      <CinematicReel projects={projects} />
 
       {/* ---------- Work ---------- */}
       <section className="work shell" id="work">
