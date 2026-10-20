@@ -34,7 +34,7 @@ export default function HomePage() {
 
       {/* ---------- Hero ---------- */}
       <section className="hero hero--video" id="home">
-        <HeroVideo url={heroVideo.url} start={heroVideo.start} end={heroVideo.end} />
+        <HeroVideo url={heroVideo.url} hiResUrl={heroVideo.hiResUrl} poster={heroVideo.poster} start={heroVideo.start} end={heroVideo.end} />
         <a className="hero__badge" href="https://youtube.com/@silenceamvs" target="_blank" rel="noopener noreferrer">
           <span className="hero__badge-tag">New</span> Fresh 4K edits on YouTube <span aria-hidden="true">→</span>
         </a>

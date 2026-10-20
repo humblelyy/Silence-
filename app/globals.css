@@ -405,3 +405,5 @@ body::after { content: ""; position: fixed; inset: -50%; z-index: 1500; pointer-
 .button--glass { background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .28); color: #fff; backdrop-filter: blur(10px); }
 .button--glass:hover { background: rgba(255, 255, 255, .22); }
 @media (max-width: 640px) { .hero--video { width: calc(100% - 16px); border-radius: 20px; min-height: 86svh; padding: 40px 12px; } }
+/* The supplied loop is letterboxed inside 16:9 — overscan to crop the baked-in bars. */
+.hero-video video.hero-video__media, .hero-video__poster { transform: scale(1.18); }

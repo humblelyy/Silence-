@@ -58,7 +58,10 @@ export const socialLinks = [
  * Can also be set with NEXT_PUBLIC_HERO_VIDEO_URL.
  */
 export const heroVideo = {
-  url: process.env.NEXT_PUBLIC_HERO_VIDEO_URL || 'https://youtu.be/lm47T73ARgI',
+  url: process.env.NEXT_PUBLIC_HERO_VIDEO_URL || '/images/hero-video-1080.mp4',
+  /** Optional high-res AV1 master, used on large screens whose browser can decode AV1. */
+  hiResUrl: process.env.NEXT_PUBLIC_HERO_VIDEO_URL ? '' : '/images/hero-video.mp4',
+  poster: process.env.NEXT_PUBLIC_HERO_VIDEO_URL ? '' : '/images/hero-poster.jpg',
   /** Optional start/end (seconds) to loop just the best section of a YouTube video. */
   start: 0,
   end: 0,
