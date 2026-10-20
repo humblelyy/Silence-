@@ -11,7 +11,8 @@ import HeroTimecode from '@/components/HeroTimecode';
 import ShowreelRows from '@/components/ShowreelRows';
 import CinematicReel from '@/components/CinematicReel';
 import ScrollProgress from '@/components/ScrollProgress';
-import { projects, socialLinks } from '@/lib/projects';
+import { projects, socialLinks, heroVideo } from '@/lib/projects';
+import HeroVideo from '@/components/HeroVideo';
 
 const INTRO = 1.5; // seconds — hero type starts as the loading intro clears
 
@@ -32,7 +33,8 @@ export default function HomePage() {
       </header>
 
       {/* ---------- Hero ---------- */}
-      <section className="hero" id="home">
+      <section className="hero hero--video" id="home">
+        <HeroVideo url={heroVideo.url} start={heroVideo.start} end={heroVideo.end} />
         <a className="hero__badge" href="https://youtube.com/@silenceamvs" target="_blank" rel="noopener noreferrer">
           <span className="hero__badge-tag">New</span> Fresh 4K edits on YouTube <span aria-hidden="true">→</span>
         </a>
@@ -71,7 +73,7 @@ export default function HomePage() {
         />
         <div className="hero__actions" data-reveal>
           <a className="button button--primary magnet-button" href="#work">Watch the work</a>
-          <a className="button button--ghost" href="#contact">Work with me</a>
+          <a className="button button--glass" href="#contact">Work with me</a>
         </div>
         <p className="hero__proof" data-reveal><strong>4K edits</strong> across Jujutsu Kaisen, Dandadan, My Dress-Up Darling and more.</p>
       </section>

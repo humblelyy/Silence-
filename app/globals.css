@@ -382,3 +382,26 @@ body::after { content: ""; position: fixed; inset: -50%; z-index: 1500; pointer-
   .cine__hud { opacity: 1; }
   .cine__bar { transform: none; }
 }
+
+/* ---------- video hero ---------- */
+.hero--video { position: relative; width: calc(100% - 24px); max-width: none; min-height: calc(100svh - 96px); margin: 0 auto 12px; padding: 64px 24px 56px; justify-content: center; border-radius: 28px; overflow: hidden; isolation: isolate; color: #fff; background: #050507; }
+.hero--video > :not(.hero-video) { position: relative; z-index: 2; }
+.hero-video { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.hero-video__poster, .hero-video__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; }
+.hero-video__poster { transform: scale(1.04); filter: saturate(1.1); transition: opacity 1s ease; }
+.hero-video__media { opacity: 0; transition: opacity 1s ease; }
+/* Cover-fit a 16:9 iframe at any aspect ratio, overscanned to hide YouTube chrome. */
+.hero-video__media--yt { top: 50%; left: 50%; width: max(100%, 177.78vh); height: max(100%, 56.25vw); transform: translate(-50%, -50%) scale(1.18); inset: auto; }
+.hero-video.is-playing .hero-video__media { opacity: 1; }
+.hero-video.is-playing .hero-video__poster { opacity: 0; }
+.hero-video__shade { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, rgba(5, 5, 10, .55), rgba(5, 5, 10, .82) 75%), linear-gradient(to bottom, rgba(5, 5, 10, .5), transparent 30%, transparent 70%, rgba(5, 5, 10, .7)); }
+.hero--video .hero__warp { color: #fff; }
+.hero--video .hero__lede { color: rgba(255, 255, 255, .82); }
+.hero--video .hero__proof { color: rgba(255, 255, 255, .7); }
+.hero--video .hero__proof strong { color: #fff; }
+.hero--video .hero__badge { background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .22); color: #fff; backdrop-filter: blur(10px); }
+.hero--video .button--primary { background: #fff; color: #0a0a0e; }
+.hero--video .button--primary:hover { background: var(--accent); color: #fff; }
+.button--glass { background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .28); color: #fff; backdrop-filter: blur(10px); }
+.button--glass:hover { background: rgba(255, 255, 255, .22); }
+@media (max-width: 640px) { .hero--video { width: calc(100% - 16px); border-radius: 20px; min-height: 86svh; padding: 40px 12px; } }

@@ -50,3 +50,16 @@ export const socialLinks = [
   { label: 'Kick', href: 'https://kick.com/silenceamv' },
   { label: 'Payhip', href: 'https://payhip.com/Silenceamvs' }
 ];
+
+/**
+ * Hero background loop. Paste ONE link here:
+ *  - a direct video file (.mp4 / .webm) — best quality and most reliable autoplay, or
+ *  - a YouTube link (youtu.be/… or youtube.com/watch?v=…) — plays muted on loop.
+ * Can also be set with NEXT_PUBLIC_HERO_VIDEO_URL.
+ */
+export const heroVideo = {
+  url: process.env.NEXT_PUBLIC_HERO_VIDEO_URL || 'https://youtu.be/lm47T73ARgI',
+  /** Optional start/end (seconds) to loop just the best section of a YouTube video. */
+  start: 0,
+  end: 0,
+};
